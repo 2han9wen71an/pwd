@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<struts>
+	<action path="user" type="com.action.UserAction" name="com.entity.Pwd_user"></action>
+	<action path="notice" type="com.action.NoticeAction" name="com.entity.Pwd_notice"></action>
+	<action path="notepad" type="com.action.NotepadAction" name="com.entity.Pwd_notepad"></action>
+	<action path="log" type="com.action.LogAction" name="com.entity.Pwd_log"></action>
+	<action path="pwd" type="com.action.PwdAction" name="com.entity.Pwd_pwd"></action>
+	<action path="plan" type="com.action.PlanAction" name="com.entity.Pwd_plan"></action>
+	<action path="set" type="com.action.SetAction" name="com.entity.Pwd_set"></action>
+	<action path="smtp" type="com.action.SmtpAction" name="com.entity.Pwd_smtp"></action>
+</struts>
