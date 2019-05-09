@@ -22,7 +22,6 @@ import com.init.StartInit;
 import com.struts.ActionForm;
 import com.struts.ActionForward;
 import com.struts.DispatchAction;
-import com.util.EmailUtil;
 import com.util.GeneralUtil;
 import com.util.MD5Util;
 import com.util.McryptUtil;
@@ -80,17 +79,15 @@ public class UserAction extends DispatchAction {
 							+ user.getEmail_token() + "' target='_blank'>" + tempContextUrl + "?method=verify&id="
 							+ pwd_user.getId() + "&verify=" + user.getEmail_token()
 							+ "</a><br/>如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接24小时内有效。<br/>如果此次激活请求非你本人所发，请忽略本邮件。<br/>";
-					try {
-						EmailUtil.sendEmail("测试一下", content, null, user.getEmail());
+					long token_exptime = new Date().getTime() + 60 * 60 * 24 * 1000;
+					int i = new CommonDao().save(new Pwd_plan(pwd_user.getId(), pwd_user.getUsername(),
+							pwd_user.getEmail(), String.valueOf(token_exptime), 1, content, 0));
+					if (i > 0) {
 						str = GeneralUtil.EchoMsg("200", "注册成功,稍后就会收到激活邮件", 0, null);
-					} catch (Exception e) {
-						try {
-							response.getWriter().print(GeneralUtil.EchoMsg("201", "邮件发送失败", 0, null));
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-						System.out.println("邮件发送失败");
+					} else {
+						str = GeneralUtil.EchoMsg("201", "注册成功,激活邮件发送失败，请联系管理员", 0, null);
 					}
+
 				} else {
 					str = GeneralUtil.EchoMsg("200", "注册成功", 0, null);
 				}
@@ -100,9 +97,8 @@ public class UserAction extends DispatchAction {
 					e.printStackTrace();
 				}
 			} else {
-				str = GeneralUtil.EchoMsg("201", "数据请求错误", 0, null);
 				try {
-					response.getWriter().print(str);
+					response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -112,7 +108,6 @@ public class UserAction extends DispatchAction {
 	}
 
 	public ActionForward login(HttpServletRequest request, HttpServletResponse response, ActionForm form) {
-
 		Pwd_user user = (Pwd_user) form;
 		user.setPass(MD5Util.StringToMD5(user.getPass(), StartInit.getSYS_KEY()));
 		String verifycode = request.getParameter("verifycode");
@@ -455,10 +450,8 @@ public class UserAction extends DispatchAction {
 				String email_token = MD5Util.StringToMD5(GeneralUtil.getRandom(8) + user.getUsername() + regtime,
 						StartInit.getSYS_KEY());
 				long token_exptime = new Date().getTime() + 60 * 60 * 24 * 1000;
-				System.out.println("token_exptime" + token_exptime);
 				String email = pwd_user.getEmail();
 				String url = GeneralUtil.GetWebUrl(request.getRequestURL().toString());
-				System.out.println(url);
 				String content = "亲爱的" + pwd_user.getUsername() + "：<br/>您正在进行找回密码操作。<br/>请点击链接重新设置您的密码。<br/><a href='"
 						+ request.getRequestURL() + "?method=resetpwd&reset_pwd_verify=" + email_token
 						+ "' target='_blank'>" + request.getRequestURL() + "?method=resetpwd&reset_pwd_verify="
@@ -515,7 +508,7 @@ public class UserAction extends DispatchAction {
 				user.setPass(MD5Util.StringToMD5(user.getPass(), StartInit.getSYS_KEY()));
 				long nowtime = new Date().getTime();
 				Pwd_user pwd_user = Pwd_userDao.SelectEmailToken(verify);
-				if (pwd_user != null) {
+				if (pwd_user != null && pwd_user.getStatus() == 0) {
 					try {
 						if (nowtime > Long.valueOf(pwd_user.getToken_exptime())) {
 							response.getWriter()

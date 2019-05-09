@@ -24,7 +24,13 @@ public class IpFilter implements Filter {
 		charset = filterConfig.getInitParameter("charset");
 		// 到数据库中把黑名单加载进来，这里简单模拟一下
 		//set.add("127.0.0.1");
-		set.add(StartInit.getPwdSet().getIpadmin());
+		String ipadmin = StartInit.getPwdSet().getIpadmin();
+		String[] split = ipadmin.split(" ");
+		if (split.length>0) {
+			for (int i = 0; i < split.length; i++) {
+				set.add(split[i]);
+			}
+		}
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

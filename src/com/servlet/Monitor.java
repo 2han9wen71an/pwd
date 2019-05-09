@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dao.Pwd_planDao;
 import com.dao.Pwd_smtpDao;
+import com.entity.Mail_Auth;
 import com.entity.Pwd_plan;
 import com.entity.Pwd_smtp;
-import com.util.EmailUtil;
 import com.util.GeneralUtil;
+import com.util.MailUtil;
 
 public class Monitor extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,6 +42,8 @@ public class Monitor extends HttpServlet {
 					e.printStackTrace();
 				}
 			} else {
+				Mail_Auth mail = new Mail_Auth(smtp.getHost(), String.valueOf(smtp.getPort()), smtp.getUsername(),
+						smtp.getPassword(), smtp.getSub());
 				for (int i = 0; i < selectAll.size(); i++) {
 					Pwd_plan plan = (com.entity.Pwd_plan) selectAll.get(i);
 					int id = plan.getId();
@@ -61,35 +64,21 @@ public class Monitor extends HttpServlet {
 						msgTitle = "用户帐号重置";
 						msg = "(重置)";
 					}
-					try {
-						if (stime.equalsIgnoreCase(String.valueOf(time))) {
-							EmailUtil.sendEmail(msgTitle, content, null, plan.getEmail());
-							plan.setStatus(1);
-							int j = Pwd_planDao.Update(plan);
-							try {
-
-								if (j > 0) {
-									response.getWriter().print(GeneralUtil.EchoMsg("200", "邮件发送成功", 0, null));
-								} else {
-									response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求失败", 0, null));
-								}
-
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}else {
-							try {
-								response.getWriter().print(GeneralUtil.EchoMsg("200", "当前没有任务", 0, null));
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
+					mail.setSender(smtp.getUsername());
+					mail.setSubject(msgTitle);
+					mail.setMessage(content);
+					mail.setReceiver(email);
+					if (plan.getStatus() == 0 && plan.getType() == 3
+							|| Long.valueOf(stime) - Long.valueOf(time) <= 60 * 1000) {
+						if (new MailUtil().send(mail)) {
+							response.getWriter().print(GeneralUtil.EchoMsg("200", "邮件发送成功", 0, null));
+						} else {
+							response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求失败", 0, null));
 						}
-					} catch (Exception e) {
-						try {
-							response.getWriter().print(GeneralUtil.EchoMsg("201", "邮件发送失败", 0, null));
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
+						plan.setStatus(1);
+						int j = Pwd_planDao.Update(plan);
+					} else {
+						response.getWriter().print(GeneralUtil.EchoMsg("200", "当前任务不需要执行", 0, null));
 					}
 				}
 			}

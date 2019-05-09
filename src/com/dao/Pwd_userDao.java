@@ -235,9 +235,11 @@ public class Pwd_userDao {
 		Object[] pas = { user.getUsername(), user.getPass(), user.getEmail(), user.getQq(), user.getId() };
 		return BaseDao.executeUpdate(sql, pas);
 	}
+
 	public static int UserPwdUpdate(Pwd_user user) {
-		String sql = "UPDATE PWD_USER SET PASS=?,STATUS=? WHERE ID=?";
-		Object[] pas = { user.getPass(),user.getStatus(), user.getId() };
+		String sql = "UPDATE PWD_USER SET PASS=?,STATUS=?,EMAIL_TOKEN=? ,TOKEN_EXPTIME =? WHERE ID=?";
+		Object[] pas = { user.getPass(), user.getStatus(), user.getEmail_token(), user.getToken_exptime(),
+				user.getId() };
 		return BaseDao.executeUpdate(sql, pas);
 	}
 
