@@ -20,19 +20,21 @@ public class PlanAction extends DispatchAction {
 	public ActionForward remind(HttpServletRequest request, HttpServletResponse response, ActionForm form) {
 		response.setContentType("text/html;charset=utf-8");
 		String stime = request.getParameter("stime");
+		Pwd_user user = (Pwd_user) request.getSession().getAttribute("user");
 		try {
 			int s = Integer.parseInt(stime);
 			long time = new Date().getTime();
 			time = time + s * 60 * 60 * 24 * 1000;
-			Pwd_user user = (Pwd_user) request.getSession().getAttribute("user");
 			Pwd_plan select = Pwd_planDao.Select(user.getId());
 			if (select != null) {
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				Date date = new Date(new Long(select.getStime()));
 				String time_ = df.format(date);
 				try {
-					response.getWriter().print(
-							GeneralUtil.EchoMsg("201", "已存在预约计划,请过期后重新预约，您预约的提醒将在" + time_ + "发送到您的邮箱", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201,
+									"已存在预约计划,请过期后重新预约，您预约的提醒将在" + time_ + "发送到您的邮箱", 0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -46,13 +48,19 @@ public class PlanAction extends DispatchAction {
 				int i = new CommonDao().save(plan);
 				if (i > 0) {
 					try {
-						response.getWriter().print(GeneralUtil.EchoMsg("200", "添加预约提醒服务成功", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 200, "添加预约提醒服务成功", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				} else {
 					try {
-						response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求失败", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 201, "数据请求失败", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -61,7 +69,10 @@ public class PlanAction extends DispatchAction {
 		} catch (NumberFormatException e) {
 			System.out.println("异常：\"" + stime + "\"不是数字/整数...");
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("0", "数据请求格式错误", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "数据请求格式错误", 0,
+								null));
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

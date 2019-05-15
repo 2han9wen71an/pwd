@@ -43,14 +43,16 @@ public class SetAction extends DispatchAction {
 		if (user.getId() == 1) {
 			int i = Pwd_setDao.SetUpdate(set);
 			if (i > 0) {
-				String str = GeneralUtil.EchoMsg("200", "请求成功", 0, null);
+				String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+						GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "请求成功", 0, null);
 				try {
 					response.getWriter().print(str);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
-				String str = GeneralUtil.EchoMsg("201", "数据请求错误", 0, null);
+				String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+						GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误", 0, null);
 				try {
 					response.getWriter().print(str);
 				} catch (IOException e) {

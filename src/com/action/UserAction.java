@@ -37,19 +37,28 @@ public class UserAction extends DispatchAction {
 		response.setContentType("text/html;charset=utf-8");
 		if (user.getEmail() == null) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "邮件必填的，不填你怎么享受VIP级别的待遇呢", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201,
+								"邮件必填的，不填你怎么享受VIP级别的待遇呢", 0, null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (!verifycode.equals(request.getSession().getAttribute("syscode"))) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("203", "验证码不正确", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 203, "验证码不正确", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (pwduser != null) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("202", "该账号已存在", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 202, "该账号已存在", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -83,13 +92,18 @@ public class UserAction extends DispatchAction {
 					int i = new CommonDao().save(new Pwd_plan(pwd_user.getId(), pwd_user.getUsername(),
 							pwd_user.getEmail(), String.valueOf(token_exptime), 1, content, 0));
 					if (i > 0) {
-						str = GeneralUtil.EchoMsg("200", "注册成功,稍后就会收到激活邮件", 0, null);
+						str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200,
+								"注册成功,稍后就会收到激活邮件", 0, null);
 					} else {
-						str = GeneralUtil.EchoMsg("201", "注册成功,激活邮件发送失败，请联系管理员", 0, null);
+						str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201,
+								"注册成功,激活邮件发送失败，请联系管理员", 0, null);
 					}
 
 				} else {
-					str = GeneralUtil.EchoMsg("200", "注册成功", 0, null);
+					str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+							GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "注册成功", 0, null);
 				}
 				try {
 					response.getWriter().print(str);
@@ -98,7 +112,10 @@ public class UserAction extends DispatchAction {
 				}
 			} else {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误",
+									0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -114,7 +131,8 @@ public class UserAction extends DispatchAction {
 		String admin = request.getParameter("admin");
 		response.setContentType("text/html;charset=utf-8");
 		if (!verifycode.equals(request.getSession().getAttribute("syscode"))) {
-			String str = GeneralUtil.EchoMsg("203", "验证码不正确", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 203, "验证码不正确", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
@@ -141,12 +159,16 @@ public class UserAction extends DispatchAction {
 					// 把cookie添加在响应对象中, 届时会随着响应对象一起返给浏览器
 					response.addCookie(cookie);
 					Pwd_userDao.update(user_);
-					response.getWriter().print(GeneralUtil.EchoMsg("200", "登陆后台管理成功！", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200,
+									"登陆后台管理成功！", 0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
-				String str = GeneralUtil.EchoMsg("204", "用户名或密码不正确！", 0, null);
+				String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+						GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 204, "用户名或密码不正确！", 0, null);
 				try {
 					response.getWriter().print(str);
 				} catch (IOException e) {
@@ -159,7 +181,8 @@ public class UserAction extends DispatchAction {
 			if (user_ != null) {
 				switch (user_.getStatus()) {
 				case 0:
-					str = GeneralUtil.EchoMsg("204", "账号已锁定", 0, null);
+					str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+							GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 204, "账号已锁定", 0, null);
 					try {
 						response.getWriter().print(str);
 					} catch (IOException e) {
@@ -184,13 +207,17 @@ public class UserAction extends DispatchAction {
 						// 把cookie添加在响应对象中, 届时会随着响应对象一起返给浏览器
 						response.addCookie(cookie);
 						Pwd_userDao.update(user_);
-						response.getWriter().print(GeneralUtil.EchoMsg("200", "登录成功", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 200, "登录成功", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 					break;
 				case 3:
-					str = GeneralUtil.EchoMsg("204", "账号未激活", 0, null);
+					str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+							GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 204, "账号未激活", 0, null);
 					try {
 						response.getWriter().print(str);
 					} catch (IOException e) {
@@ -198,7 +225,8 @@ public class UserAction extends DispatchAction {
 					}
 					break;
 				default:
-					str = GeneralUtil.EchoMsg("204", "账号已锁定", 0, null);
+					str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+							GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 204, "账号已锁定", 0, null);
 					try {
 						response.getWriter().print(str);
 					} catch (IOException e) {
@@ -210,13 +238,19 @@ public class UserAction extends DispatchAction {
 				Pwd_userDao.UserErrUpdate(user.getUsername());
 				if (user.getError_num() > 5) {
 					try {
-						response.getWriter().print(GeneralUtil.EchoMsg("204", "密码错误五次,账号锁定", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 204, "密码错误五次,账号锁定", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				} else {
 					try {
-						response.getWriter().print(GeneralUtil.EchoMsg("204", "密码错误", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 204, "密码错误", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -249,13 +283,19 @@ public class UserAction extends DispatchAction {
 			try {
 				Pwd_user puser = Pwd_userDao.UserSelect(user_.getUsername(), null, null);
 				request.getSession().setAttribute("user", puser);
-				response.getWriter().print(GeneralUtil.EchoMsg("200", "请求修改用户信息成功", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "请求修改用户信息成功",
+								0, null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -274,20 +314,29 @@ public class UserAction extends DispatchAction {
 			List all = Pwd_userDao.SelectAll(0, page);
 			if (all.size() > 0) {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("0", "请求获取用户列表成功", page.getTotalRow(), all));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "请求获取用户列表成功",
+									page.getTotalRow(), all));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "当前没有用户", page.getTotalRow(), all));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "当前没有用户",
+									page.getTotalRow(), all));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "你没有权限访问", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "你没有权限访问", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -303,14 +352,16 @@ public class UserAction extends DispatchAction {
 		if (puser.getId() == 1) {
 			int i = Pwd_userDao.delete(user);
 			if (i > 0) {
-				String str = GeneralUtil.EchoMsg("200", "删除密码记录成功", 0, null);
+				String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+						GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "删除密码记录成功", 0, null);
 				try {
 					response.getWriter().print(str);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
-				String str = GeneralUtil.EchoMsg("201", "数据请求错误", 0, null);
+				String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+						GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误", 0, null);
 				try {
 					response.getWriter().print(str);
 				} catch (IOException e) {
@@ -319,7 +370,10 @@ public class UserAction extends DispatchAction {
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "你没有权限访问", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "你没有权限访问", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -337,20 +391,29 @@ public class UserAction extends DispatchAction {
 		if (puser.getId() == 1) {
 			if (list.size() > 0) {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("0", "请求查找用户成功", list.size(), list));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "请求查找用户成功",
+									list.size(), list));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "找不到用户……", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "找不到用户……",
+									0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "你没有权限访问", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "你没有权限访问", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -439,7 +502,10 @@ public class UserAction extends DispatchAction {
 		response.setContentType("text/html;charset=utf-8");
 		if (!verifycode.equals(request.getSession().getAttribute("syscode"))) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("203", "验证码不正确", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 203, "验证码不正确", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -467,13 +533,19 @@ public class UserAction extends DispatchAction {
 					int j = Pwd_userDao.updateStatu(pwd_user);
 					if (j > 0) {
 						try {
-							response.getWriter().print(GeneralUtil.EchoMsg("200", "找回密码链接稍后发送到您的邮箱", 0, null));
+							response.getWriter()
+									.print(GeneralUtil.EchoMsg(user.getId(),
+											request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+											request.getHeader("User-Agent"), 200, "找回密码链接稍后发送到您的邮箱", 0, null));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					} else {
 						try {
-							response.getWriter().print(GeneralUtil.EchoMsg("201", "邮件发送成功,但数据请求错误", 0, null));
+							response.getWriter()
+									.print(GeneralUtil.EchoMsg(user.getId(),
+											request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+											request.getHeader("User-Agent"), 201, "邮件发送成功,但数据请求错误", 0, null));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -482,7 +554,10 @@ public class UserAction extends DispatchAction {
 				}
 			} else {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "账号或邮箱不存在", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "账号或邮箱不存在",
+									0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -499,7 +574,10 @@ public class UserAction extends DispatchAction {
 		String verify = request.getParameter("reset_pwd_verify");
 		if (!verifycode.equals(request.getSession().getAttribute("syscode"))) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("203", "验证码不正确", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 203, "验证码不正确", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -511,16 +589,23 @@ public class UserAction extends DispatchAction {
 				if (pwd_user != null && pwd_user.getStatus() == 0) {
 					try {
 						if (nowtime > Long.valueOf(pwd_user.getToken_exptime())) {
-							response.getWriter()
-									.print(GeneralUtil.EchoMsg("201", "您的激活有效期已过，请登录您的帐号重新发送激活邮件", 0, null));
+							response.getWriter().print(GeneralUtil.EchoMsg(user.getId(),
+									request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+									request.getHeader("User-Agent"), 201, "您的激活有效期已过，请登录您的帐号重新发送激活邮件", 0, null));
 						} else {
 							user.setStatus(1);
 							user.setId(pwd_user.getId());
 							int i = Pwd_userDao.UserPwdUpdate(user);
 							if (i > 0) {
-								response.getWriter().print(GeneralUtil.EchoMsg("200", "密码重置成功", 0, null));
+								response.getWriter()
+										.print(GeneralUtil.EchoMsg(user.getId(),
+												request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+												request.getHeader("User-Agent"), 200, "密码重置成功", 0, null));
 							} else {
-								response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
+								response.getWriter()
+										.print(GeneralUtil.EchoMsg(user.getId(),
+												request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+												request.getHeader("User-Agent"), 201, "数据请求错误", 0, null));
 							}
 						}
 					} catch (IOException e) {
@@ -528,14 +613,20 @@ public class UserAction extends DispatchAction {
 					}
 				} else {
 					try {
-						response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 201, "数据请求错误", 0, null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			} else {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求错误", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误",
+									0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

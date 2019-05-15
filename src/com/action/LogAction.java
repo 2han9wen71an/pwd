@@ -17,21 +17,27 @@ import com.util.PageUtil;
 public class LogAction extends DispatchAction {
 	public ActionForward log_list(HttpServletRequest request, HttpServletResponse response, ActionForm form) {
 		response.setContentType("text/html;charset=utf-8");
-		String currentCount=request.getParameter("page");
-		String pageSize=request.getParameter("limit");
-		List totallist = Pwd_logDao.Select(1,null,null);
-		PageUtil page =new PageUtil(totallist.size(), Integer.valueOf(currentCount), Integer.valueOf(pageSize));
+		String currentCount = request.getParameter("page");
+		String pageSize = request.getParameter("limit");
+		List totallist = Pwd_logDao.Select(1, null, null);
+		PageUtil page = new PageUtil(totallist.size(), Integer.valueOf(currentCount), Integer.valueOf(pageSize));
 		Pwd_user user = (Pwd_user) request.getSession().getAttribute("user");
-		List list = Pwd_logDao.Select(user.getId(),user.getUsername(),page);
+		List list = Pwd_logDao.Select(user.getId(), user.getUsername(), page);
 		if (page.getTotalRow() > 0) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("0", "数据请求成功",page.getTotalRow(), list));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "数据请求成功",
+								page.getTotalRow(), list));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "当前没有数据",0, list));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "当前没有数据", 0,
+								list));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

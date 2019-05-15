@@ -11,7 +11,7 @@
  Target Server Version : 110200
  File Encoding         : 65001
 
- Date: 07/05/2019 16:49:16
+ Date: 15/05/2019 19:29:12
 */
 
 
@@ -21,14 +21,12 @@
 DROP TABLE "SCOTT"."PWD_LOG";
 CREATE TABLE "SCOTT"."PWD_LOG" (
   "ID" NUMBER NOT NULL ,
-  "USERID" NUMBER NOT NULL ,
-  "USERNAME" VARCHAR2(64 BYTE) NOT NULL ,
-  "EV" NUMBER ,
+  "USERID" NUMBER ,
   "URL" VARCHAR2(64 BYTE) NOT NULL ,
   "IP" VARCHAR2(64 BYTE) NOT NULL ,
-  "UA" VARCHAR2(64 BYTE) NOT NULL ,
-  "JSON" VARCHAR2(64 BYTE) ,
-  "TIME" VARCHAR2(64 BYTE) ,
+  "UA" VARCHAR2(255 BYTE) NOT NULL ,
+  "JSON" VARCHAR2(4000 BYTE) NOT NULL ,
+  "TIME" VARCHAR2(64 BYTE) NOT NULL ,
   "RECORD" VARCHAR2(64 BYTE) 
 )
 TABLESPACE "USERS"
@@ -37,6 +35,10 @@ NOCOMPRESS
 PCTFREE 10
 INITRANS 1
 STORAGE (
+  INITIAL 65536 
+  NEXT 1048576 
+  MINEXTENTS 1
+  MAXEXTENTS 2147483645
   BUFFER_POOL DEFAULT
 )
 PARALLEL 1
@@ -72,10 +74,6 @@ PARALLEL 1
 NOCACHE
 DISABLE ROW MOVEMENT
 ;
-
--- ----------------------------
--- Records of PWD_NOTEPAD
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for PWD_NOTICE
@@ -136,9 +134,6 @@ DISABLE ROW MOVEMENT
 ;
 
 -- ----------------------------
--- Records of PWD_PLAN
--- ----------------------------
--- ----------------------------
 -- Table structure for PWD_PWD
 -- ----------------------------
 DROP TABLE "SCOTT"."PWD_PWD";
@@ -173,9 +168,6 @@ NOCACHE
 DISABLE ROW MOVEMENT
 ;
 
--- ----------------------------
--- Records of PWD_PWD
--- ----------------------------
 -- ----------------------------
 -- Table structure for PWD_SET
 -- ----------------------------
@@ -248,7 +240,7 @@ DISABLE ROW MOVEMENT
 -- ----------------------------
 -- Records of PWD_SMTP
 -- ----------------------------
-INSERT INTO "SCOTT"."PWD_SMTP" VALUES ('1', 'smtp.163.com', '465', ' ', ' ', 'Zzz', '1');
+INSERT INTO "SCOTT"."PWD_SMTP" VALUES ('1', 'smtp.exmail.qq.com', '465', ' ', ' ', 'Zzz', '1');
 
 -- ----------------------------
 -- Table structure for PWD_USER
@@ -290,7 +282,7 @@ DISABLE ROW MOVEMENT
 -- ----------------------------
 -- Records of PWD_USER
 -- ----------------------------
-INSERT INTO "SCOTT"."PWD_USER" VALUES ('1', 'zhangwentian', '6a4bcd2e92a2e1ee7108f86f7ee481db', '862163687@qq.com', '862163687', ' ', '2019-05-07 15:26:29', ' ', '0:0:0:0:0:0:0:1', 'JFEn', '1', '2', '123', NULL);
+INSERT INTO "SCOTT"."PWD_USER" VALUES ('1', 'zhangwentian', '6a4bcd2e92a2e1ee7108f86f7ee481db', '862163687@qq.com', '862163687', ' ', '2019-05-15 17:22:27', ' ', '0:0:0:0:0:0:0:1', 'RlMk', '1', '2', '123', NULL);
 
 -- ----------------------------
 -- Primary Key structure for table PWD_LOG
@@ -300,11 +292,11 @@ ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011057" PRIMARY KEY ("ID");
 -- ----------------------------
 -- Checks structure for table PWD_LOG
 -- ----------------------------
-ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011119" CHECK ("USERID" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
-ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011120" CHECK ("USERNAME" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
 ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011121" CHECK ("URL" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
 ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011122" CHECK ("IP" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
 ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011123" CHECK ("UA" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
+ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011321" CHECK ("JSON" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
+ALTER TABLE "SCOTT"."PWD_LOG" ADD CONSTRAINT "SYS_C0011322" CHECK ("TIME" IS NOT NULL) NOT DEFERRABLE INITIALLY IMMEDIATE NORELY VALIDATE;
 
 -- ----------------------------
 -- Primary Key structure for table PWD_NOTEPAD

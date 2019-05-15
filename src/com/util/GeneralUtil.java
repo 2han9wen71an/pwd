@@ -1,5 +1,7 @@
 package com.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,10 +9,13 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import com.dao.CommonDao;
+import com.entity.Pwd_log;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class GeneralUtil {
 	public static void main(String[] args) {
@@ -117,14 +122,32 @@ public class GeneralUtil {
 		return str;
 	}
 
-	public static String EchoMsg(String code, String msg, int count, Object data) {
+	/**
+	 * 输出json并写入数据库
+	 * 
+	 * @param userid
+	 *            用户id
+	 * @param url
+	 *            网址
+	 * @param ip
+	 *            ip
+	 * @param ua
+	 *            ua
+	 * @param code
+	 *            状态码
+	 * @param msg
+	 *            返回的消息
+	 * @param count
+	 *            总值
+	 * @param data
+	 *            数据
+	 * @return
+	 */
+	public static String EchoMsg(int userid, String url, String ip, String ua, int code, String msg, int count,
+			Object data) {
 		Map map = new HashMap();
-		if (code != null) {
-			map.put("code", code);
-		}
-		if (msg != null) {
-			map.put("msg", msg);
-		}
+		map.put("code", code);
+		map.put("msg", msg);
 		if (count != 0) {
 			map.put("count", count);
 		}
@@ -132,17 +155,57 @@ public class GeneralUtil {
 			map.put("data", data);
 		}
 		String str = new Gson().toJson(map);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		Pwd_log log = new Pwd_log(userid, url, ip, ua, str, df.format(new Date()), msg);
+		int i = new CommonDao().save(log);
+		if (i > 0) {
+			System.out.println("日志写入成功");
+		} else {
+			System.out.println("日志写入失败");
+		}
 		return str;
 	}
 
-	public static String getcookie(HttpServletRequest request, String name) {
-		Cookie[] cookies = request.getCookies();// 创建一个cookie集合并拿到cookie放入创建好的cookie集合里面
-		// 遍历cookie集合并判断是否有自己想要的指定cookie如果有则返回指定cookie的值，如果没有则返回空字符串
-		for (Cookie cookie : cookies) {
-			if (name.equals(cookie.getName())) {
-				return cookie.getValue();
-			}
+	public final static boolean isJSON(String jsonStr) {
+		JsonElement jsonElement;
+		try {
+			jsonElement = new JsonParser().parse(jsonStr);
+		} catch (Exception e) {
+			return false;
 		}
-		return "";
+		if (jsonElement == null) {
+			return false;
+		}
+		if (!jsonElement.isJsonObject()) {
+			return false;
+		}
+		return true;
+	}
+
+	public final static String smartDate(String agoTime) {
+		long nowtime=Long.valueOf(agoTime);
+		long time=new Date().getTime()-nowtime;
+		int num=0;
+		if (time >= 31104000) { // N年前
+	        num = (int)(time / 31104000);
+	        return num+"年前";
+	    }
+	    if (time >= 2592000) { // N月前
+	        num = (int)(time / 2592000);
+	        return num+"月前";
+	    }
+	    if (time >= 86400) { // N天前
+	        num = (int)(time / 86400);
+	        return num+"天前";
+	    }
+	    if (time >= 3600) { // N小时前
+	        num = (int)(time / 3600);
+	        return num+"小时前";
+	    }
+	    if (time > 60) { // N分钟前
+	        num = (int)(time / 60);
+	        return num+"分钟前";
+	    }
+	    return "1分钟前";
 	}
 }

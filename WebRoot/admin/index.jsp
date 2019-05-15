@@ -119,9 +119,6 @@
 					[ {
 						type : 'numbers'
 					}, {
-						field : 'username',
-						title : '用户'
-					}, {
 						field : 'ip',
 						title : 'IP'
 					}, {

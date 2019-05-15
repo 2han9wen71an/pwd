@@ -29,13 +29,19 @@ public class NotepadAction extends DispatchAction {
 		List list = Pwd_notepadDao.Select(0, user.getId(), 0, null, page);
 		if (page.getTotalRow() > 0) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("0", "数据请求成功", page.getTotalRow(), list));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "数据请求成功",
+								page.getTotalRow(), list));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "当前没有数据", 0, list));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "当前没有数据", 0,
+								list));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -53,14 +59,16 @@ public class NotepadAction extends DispatchAction {
 		note.setType(0);
 		int i = new CommonDao().save(note);
 		if (i > 0) {
-			String str = GeneralUtil.EchoMsg("200", "增加备忘录成功", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "增加备忘录成功", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			String str = GeneralUtil.EchoMsg("201", "数据请求失败", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求失败", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
@@ -78,14 +86,16 @@ public class NotepadAction extends DispatchAction {
 		int i = Pwd_notepadDao.update(note);
 		if (i > 0) {
 			request.getSession().setAttribute("count", Pwd_notepadDao.Select(0, user.getId(), 0, null, null).size());
-			String str = GeneralUtil.EchoMsg("200", "请求修改备忘录状态成功", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "请求修改备忘录状态成功", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			String str = GeneralUtil.EchoMsg("201", "数据请求错误", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
@@ -102,14 +112,16 @@ public class NotepadAction extends DispatchAction {
 		note.setUserid(user.getId());
 		int i = Pwd_notepadDao.delete(note);
 		if (i > 0) {
-			String str = GeneralUtil.EchoMsg("200", "删除备忘录成功", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "删除备忘录成功", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			String str = GeneralUtil.EchoMsg("201", "数据请求错误", 0, null);
+			String str = GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+					GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "数据请求错误", 0, null);
 			try {
 				response.getWriter().print(str);
 			} catch (IOException e) {
@@ -135,13 +147,19 @@ public class NotepadAction extends DispatchAction {
 		// Integer.valueOf(type), content, page);
 		if (totallist.size() > 0) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("0", "请求查找备忘录成功", totallist.size(), totallist));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 0, "请求查找备忘录成功",
+								totallist.size(), totallist));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("201", "找不到备忘录……", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201, "找不到备忘录……", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -155,7 +173,10 @@ public class NotepadAction extends DispatchAction {
 		PageUtil page = new PageUtil(5, 1);
 		List select = Pwd_notepadDao.Select(0, user.getId(), 0, null, page);
 		try {
-			response.getWriter().print(GeneralUtil.EchoMsg("200", "请求成功", page.getTotalRow(), select));
+			response.getWriter()
+					.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+							GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "请求成功",
+							page.getTotalRow(), select));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

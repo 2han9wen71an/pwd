@@ -14,21 +14,26 @@ import com.dao.Pwd_smtpDao;
 import com.entity.Mail_Auth;
 import com.entity.Pwd_plan;
 import com.entity.Pwd_smtp;
+import com.entity.Pwd_user;
 import com.util.GeneralUtil;
 import com.util.MailUtil;
 
 public class Monitor extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=utf-8");
+		Pwd_user user = (Pwd_user) request.getSession().getAttribute("user");
 		long time = new Date().getTime();
 		List selectAll = Pwd_planDao.SelectAll(String.valueOf(time));
 		for (int i = 0; i < selectAll.size(); i++) {
 			Pwd_plan Pwd_plan = (com.entity.Pwd_plan) selectAll.get(i);
 			System.out.println(Pwd_plan.getContent());
 		}
-		if (selectAll.size()==0) {
+		if (selectAll.size() == 0) {
 			try {
-				response.getWriter().print(GeneralUtil.EchoMsg("200", "当前无任务", 0, null));
+				response.getWriter()
+						.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+								GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 200, "当前无任务", 0,
+								null));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -37,7 +42,10 @@ public class Monitor extends HttpServlet {
 			if (smtp.getHost() == null || smtp.getPort() == 0 || smtp.getUsername() == null
 					|| smtp.getPassword() == null || smtp.getSub() == null) {
 				try {
-					response.getWriter().print(GeneralUtil.EchoMsg("201", "邮件smtp未配置", 0, null));
+					response.getWriter()
+							.print(GeneralUtil.EchoMsg(user.getId(), request.getRequestURL().toString(),
+									GeneralUtil.getIpAddress(request), request.getHeader("User-Agent"), 201,
+									"邮件smtp未配置", 0, null));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -71,14 +79,23 @@ public class Monitor extends HttpServlet {
 					if (plan.getStatus() == 0 && plan.getType() == 3
 							|| Long.valueOf(stime) - Long.valueOf(time) <= 60 * 1000) {
 						if (new MailUtil().send(mail)) {
-							response.getWriter().print(GeneralUtil.EchoMsg("200", "邮件发送成功", 0, null));
+							response.getWriter()
+									.print(GeneralUtil.EchoMsg(user.getId(),
+											request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+											request.getHeader("User-Agent"), 200, "邮件发送成功", 0, null));
 						} else {
-							response.getWriter().print(GeneralUtil.EchoMsg("201", "数据请求失败", 0, null));
+							response.getWriter()
+									.print(GeneralUtil.EchoMsg(user.getId(),
+											request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+											request.getHeader("User-Agent"), 201, "数据请求失败", 0, null));
 						}
 						plan.setStatus(1);
 						int j = Pwd_planDao.Update(plan);
 					} else {
-						response.getWriter().print(GeneralUtil.EchoMsg("200", "当前任务不需要执行", 0, null));
+						response.getWriter()
+								.print(GeneralUtil.EchoMsg(user.getId(),
+										request.getRequestURL().toString(), GeneralUtil.getIpAddress(request),
+										request.getHeader("User-Agent"), 200, "当前任务不需要执行", 0, null));
 					}
 				}
 			}

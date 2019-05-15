@@ -35,9 +35,8 @@ public class Pwd_logDao {
 				}
 			}
 			while (rs.next()) {
-				Pwd_log log = new Pwd_log(rs.getInt("userid"), rs.getString("username"), rs.getInt("ev"),
-						rs.getString("url"), rs.getString("ip"), rs.getString("ua"), rs.getString("json"),
-						rs.getString("time"), rs.getString("record"));
+				Pwd_log log = new Pwd_log(rs.getInt("userid"), rs.getString("url"), rs.getString("ip"),
+						rs.getString("ua"), rs.getString("json"), rs.getString("time"), rs.getString("record"));
 				list.add(log);
 			}
 
